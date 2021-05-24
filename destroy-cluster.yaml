@@ -1,0 +1,61 @@
+- hosts: all
+  name: Destroy the entire K8S cluster and remove all possible binaries and files
+  tags: hard
+  become: yes
+  tasks:
+    - name: Check if kubeadm is installed
+      command: dpkg -l kubeadm
+      ignore_errors: true
+      register: kubeadm_dpkg_query
+
+    - name: Reset kubeadm
+      command: kubeadm reset -f
+      register: kubeadm_output
+      ignore_errors: true
+      when: kubeadm_dpkg_query.rc == 0
+
+    - name: Check if kubelet is installed
+      shell: dpkg -l kubelet 2>&1
+      ignore_errors: true
+      register: kubelet_dpkg_query
+
+    - name: Stop kubelet
+      service:
+          name: kubelet
+          state: stopped
+          enabled: no
+      ignore_errors: true
+      when: kubelet_dpkg_query.rc == 0
+
+    - name: Unhold k8s binaries
+      shell: apt-mark unhold kubeadm kubelet kubectl
+      when: kubelet_dpkg_query.rc == 0
+
+    - name: Remove all packages
+      apt:
+          name: "{{ packages }}"
+          state: absent
+          autoremove: yes
+          purge: yes
+      vars:
+          packages:
+              - kubelet
+              - kubectl
+              - kubeadm
+
+    - name: Remove br_filter files
+      file:
+          path: "{{ item }}"
+          state: absent
+      with_items:
+          - /etc/modules-load.d/k8s.conf
+          - /etc/sysctl.d/k8s.conf
+
+    - name: Run sysctl
+      command: sysctl --system
+
+    - name: Remove apt repository for Kubernetes
+      apt_repository:
+          repo: deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main
+          state: absent
+          filename: kubernetes.list
