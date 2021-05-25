@@ -1,0 +1,5 @@
+- name: Test ansible role
+  hosts: master
+  become: true
+  roles:
+      - ansible-kubernetes-master-security
