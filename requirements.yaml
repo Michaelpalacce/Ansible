@@ -1,4 +1,5 @@
 - name: michaelpalacce.docker
+- name: michaelpalacce.docker_compose
 - name: michaelpalacce.helm
 - name: michaelpalacce.kubernetes_preflight
 - name: michaelpalacce.kubernetes_cluster

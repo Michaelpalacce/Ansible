@@ -3,4 +3,5 @@
   become: true
   roles:
       - ansible-docker
+      - ansible-kubernetes-preflight
       - ansible-kubernetes-cluster

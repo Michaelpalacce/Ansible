@@ -8,7 +8,6 @@ Vagrant.configure("2") do |config|
 
   config.vm.provider :virtualbox do |v|
     v.memory = 6000
-    v.linked_clone = true
     v.cpus = 2
   end
 
