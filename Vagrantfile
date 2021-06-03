@@ -5,6 +5,7 @@ Vagrant.configure("2") do |config|
   config.vm.box = "bento/ubuntu-20.04"
   config.ssh.insert_key = false
   config.vm.synced_folder ".", "/vagrant", disabled: false
+  config.vm.boot_timeout = 600
 
   config.vm.provider :virtualbox do |v|
     v.memory = 6000
@@ -19,10 +20,5 @@ Vagrant.configure("2") do |config|
   config.vm.define "worker1" do |worker1|
     worker1.vm.hostname = "worker1"
     worker1.vm.network :private_network, ip: "10.10.10.11"
-  end
-
-  config.vm.define "worker2" do |worker2|
-    worker2.vm.hostname = "worker2"
-    worker2.vm.network :private_network, ip: "10.10.10.12"
   end
 end

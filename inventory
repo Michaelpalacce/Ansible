@@ -4,7 +4,6 @@
 
 [workers]
 10.10.10.11
-10.10.10.12
 
 # This group has all the servers
 [all:children]
